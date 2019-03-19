@@ -1,5 +1,5 @@
 #!/bin/bash
 cd /opt/lampp/
-sudo rm -rf help-desk-private-files
+sudo rm -rf send-mail-private-files
 cd htdocs/
-sudo rm -rf help-desk
+sudo rm -rf send-mail
