@@ -2,7 +2,7 @@
 
 <?php 
 
-  $fileReference = fopen('file.hdesk', 'r');
+  $fileReference = fopen('../../help-desk-private-files/file.hdesk', 'r');
 
   $issues = [];
 
@@ -10,11 +10,26 @@
   while (!feof($fileReference)) { 
     //le a linha atual e armazena, colocando o cursor na proxima linha
     $lineData = fgets($fileReference);
+
     if ($lineData == "") {
       continue;
     }
 
-    $issues[] = $lineData;
+    $parsedLineData = explode('##', $lineData);
+
+    // se não tiver 4 parametros nas informações do chamado atual:
+    // houve um erro, devemos ignorá-lo
+    if (count($parsedLineData) < 4) { continue; }
+
+
+    // se a conta for tipo 2 (usuario normal)
+    if ($_SESSION['accountType'] == 2) {
+      if ($_SESSION['userId'] != $parsedLineData[0]) {
+        continue;
+      }
+    } 
+
+    $issues[] = [$parsedLineData[1], $parsedLineData[2], $parsedLineData[3]];
   }
 
 
@@ -67,15 +82,13 @@
 
 
 
-              <?php foreach ($issues as $issue) { 
-                $issueData = explode('##', $issue); 
-                if (count($issueData) < 3) { continue; } ?>
+              <?php foreach ($issues as $issue) { ?>
 
                 <div class="card mb-3 bg-light">
                   <div class="card-body">
-                    <h5 class="card-title"><?=$issueData[0]?></h5>
-                    <h6 class="card-subtitle mb-2 text-muted"><?=$issueData[1]?></h6>
-                    <p class="card-text"><?=$issueData[2]?></p>
+                    <h5 class="card-title"><?=$issue[0]?></h5>
+                    <h6 class="card-subtitle mb-2 text-muted"><?=$issue[1]?></h6>
+                    <p class="card-text"><?=$issue[2]?></p>
 
                   </div>
                 </div> 
