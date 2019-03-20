@@ -1,0 +1,97 @@
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8">
+		<title>App Pesquisa Endereço</title>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+		<script>
+			// API URL: viacep.com.br/ws/<CEP>/json/unicode/
+			function fixInputInformation(rawString) {
+				//tira o hifen, se tiver
+				let parsedString = rawString
+				while (parsedString.includes("-")) {
+					parsedString = parsedString.replace("-", "")	
+				}
+				return parsedString
+			}
+
+			function fetchAddresInformation(cepString) {
+				let requester = new XMLHttpRequest()
+				requester.open('GET', 'http://viacep.com.br/ws/' + cepString +'/json/unicode/')
+
+				requester.onreadystatechange = () => {
+
+					if (requester.readyState == 4) {
+						if (requester.status == 200) {
+							cepObject = JSON.parse(requester.responseText)
+							updateUIFromObject(cepObject)
+						} else {
+							console.log('Erro desconhecido. Código: ' + requester.status)
+							updateUIFromObject(null)
+						}
+					}
+
+				}
+
+				requester.send()
+			}
+
+			function doWork(sender) {
+				//se o usuario apertou enter (keyCode = 13)
+				var keyPressed = event.which || event.keyCode
+				if (keyPressed == 13) {
+					let parsedString = fixInputInformation(sender.value)
+					fetchAddresInformation(parsedString)
+				}
+			}
+
+			function updateUIFromObject(cepObject) {
+				let enderecoTextField = document.getElementById('endereco')
+				let bairroTextField = document.getElementById('bairro')
+				let cidadeTextField = document.getElementById('cidade')
+				let ufTextField = document.getElementById('uf')
+
+				enderecoTextField.value = cepObject != null ? cepObject.logradouro : "CEP INVALIDO"
+				bairroTextField.value = cepObject != null ? cepObject.bairro : "CEP INVALIDO"
+				cidadeTextField.value = cepObject != null ? cepObject.localidade : "CEP INVALIDO"
+				ufTextField.value = cepObject != null ? cepObject.uf : "CEP INVALIDO"
+			}
+
+
+		</script>
+	</head>
+	<body>
+		
+		<nav class="navbar navbar-light bg-light mb-4">
+			<div class="container">
+				<div class="navbar-brand mb-0 h1">
+					<h3>App Pesquisa Endereço</h3>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container">
+			<div class="row form-group">
+				<div class="col-sm-3">
+					<input type="text" class="form-control" placeholder="CEP" onkeyup="doWork(this)" />
+				</div>
+				<div class="col-sm-9">
+					<input type="text" class="form-control" placeholder="Endereço" readonly id="endereco" />
+				</div>
+			</div>
+
+			<div class="row form-group">
+				<div class="col-sm-6">
+					<input type="text" class="form-control" placeholder="Bairro" readonly id="bairro" />
+				</div>
+				<div class="col-sm-4">
+					<input type="text" class="form-control" placeholder="Cidade" readonly id="cidade" />
+				</div>
+
+				<div class="col-sm-2">
+					<input type="text" class="form-control" placeholder="UF" readonly id="uf" />
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html lang="pt-br">
+	<head>
+		<meta charset="UTF-8">
+
+		<title>Requisições Assíncronas</title>
+		
+		<!-- bootstrap - link cdn -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+
+		<script>
+			
+			function getPage(url) {
+
+				// limpa o que há na area de conteudo dinamico
+				let dynamicContentArea = document.getElementById('dynamic-content-area')
+				dynamicContentArea.innerHTML = ''
+
+				// adiciona o ícone de loading
+				if (!(document.getElementById('loadingGIF'))) {
+					let loadingGIF = document.createElement('img')
+					loadingGIF.src = 'loading.gif'
+					loadingGIF.id = 'loadingGIF'
+					loadingGIF.className = 'rounded mx-auto d-block'
+					dynamicContentArea.appendChild(loadingGIF)
+				}
+
+				let ajax = new XMLHttpRequest()
+				ajax.open('GET', 'pagina_1_conteudo.html')
+				
+
+				// devemos escutar a resposta para trata-la quando disponível
+				// a função abaixo é o callback de quando o state muda (server notifica a mudança e o JS a chama automaticamente)
+				// verificando o readyState do objeto requisitante, aplicaremos nossa regra de negócio
+				ajax.onreadystatechange = () => {
+					// state = 0 -> requisição não iniciada
+					// state = 1 -> conexão com o server estabelecida
+					// ...
+					// state = 4 -> requisição concluida e resposta disponível
+					if (ajax.readyState == 4) {
+
+						// pode ser removido pois INNERHTML remove os elementos filhos
+						let gif = document.getElementById('loadingGIF')
+						if (gif) {
+							gif.remove()
+						}
+
+						if (ajax.status == 200) {
+							document.getElementById('dynamic-content-area').innerHTML = 'Requisição bem sucedida. Arquivo encontrado.'
+						} else if (ajax.status = 404) {
+							document.getElementById('dynamic-content-area').innerHTML = 'Requisição bem sucedida. Arquivo não encontrado.'
+						} else {
+							document.getElementById('dynamic-content-area').innerHTML = 'Houve um erro, por favor contate o suporte'
+						}
+
+					}
+				}
+				ajax.send()
+			}
+			
+		</script>
+	
+	</head>
+
+	<body>
+
+		<!-- Static navbar -->
+	    <nav class="navbar navbar-light bg-light mb-4">
+	      <div class="container">
+	        <div class="navbar-brand mb-0 h1">
+	        	<h3>Requisições síncronas e assíncronas</h3>
+	        </div>
+	      </div>
+	    </nav>
+
+
+	    <div class="container">
+
+	    	<div class="row mb-2">
+	    		<div class="col-md-4 center"></div>
+	    		<div class="col-md-4 center">
+	    			<a href="#" class="btn btn-primary" onclick="getPage('pagina_1_conteudo.html')">Página 1</a>
+	    			<a href="#" class="btn btn-primary" onclick="getPage('pagina_2_conteudo.html')">Página 2</a>
+	    			<a href="#" class="btn btn-primary" onclick="getPage('pagina_3_conteudo.html')">Página 3</a>
+	    		</div>
+	    		<div class="col-md-4 center"></div>
+	    	</div>
+	    	
+	    	<div class="row">
+		    	<div class="col-md-1"></div>
+
+		    	<div class="col-md-10" id="dynamic-content-area">
+
+		    		<!-- Carregar paginas dinamicamente -->
+
+		    	</div>
+		    		
+				<div class="col-md-1"></div>
+			</div>
+
+		</div>	
+	</body>
+</html>
