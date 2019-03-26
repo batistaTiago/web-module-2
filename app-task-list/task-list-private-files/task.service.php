@@ -35,10 +35,10 @@
 			print_r($this->task);
 			echo '</pre>';
 
-			$query = 'UPDATE tb_tarefas SET tarefa = :description WHERE id = :id';
+			$query = 'UPDATE tb_tarefas SET tarefa = ? WHERE id = ?';
 			$statement = $this->conn->prepare($query);
-			$statement->bindValue(':description', $this->task->__get('description'));
-			$statement->bindValue(':id', $this->task->__get('id'));
+			$statement->bindValue(1, $this->task->__get('description'));
+			$statement->bindValue(2, $this->task->__get('id'));
 			return $statement->execute();
 		}
 
