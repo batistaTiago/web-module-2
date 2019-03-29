@@ -40,7 +40,7 @@ $(document).ready(() => {
 
 		$.ajax({
 			type: 'GET',
-			url: 'main.php',
+			url: 'teste1/teste/main2.php',
 			data: 'competencia=' + competencia,
 			dataType: 'json',
 			success: response => {
